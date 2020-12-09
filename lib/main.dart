@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import './question.dart';
-import './answer.dart';
+import './quiz.dart';
+import './result.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,13 +14,22 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   var _questionIndex = 0;
+  var _totalScore = 0;
 
-  void _answerQuestion() {
+  void _answerQuestion(int score) {
+    _totalScore += score;
     setState(() {
       _questionIndex = _questionIndex + 1;
     });
 
     print('Answer chosen');
+  }
+
+  void _resetQuiz() {
+    setState(() {
+      _questionIndex = 0;
+      _totalScore = 0;
+    });
   }
 
   @override
@@ -29,28 +38,28 @@ class _MyAppState extends State<MyApp> {
       {
         'questionText': 'Favorite Color?',
         'answers': [
-          'Black',
-          'Red',
-          'Green',
-          'White',
+          {'text': 'Black', 'score': 1},
+          {'text': 'Red', 'score': 2},
+          {'text': 'Green', 'score': 3},
+          {'text': 'White', 'score': 4},
         ]
       },
       {
         'questionText': 'Favorite Scientist?',
         'answers': [
-          'Newton',
-          'Darwin',
-          'Einstein',
-          'Feinmann',
+          {'text': 'Newton', 'score': 1},
+          {'text': 'Darwin', 'score': 2},
+          {'text': 'Einstein', 'score': 3},
+          {'text': 'Feinmann', 'score': 4},
         ]
       },
       {
         'questionText': 'Favorite Astronaut?',
         'answers': [
-          'Armstrong',
-          'Aldrin',
-          'Collins',
-          'Gagarin',
+          {'text': 'Armstrong', 'score': 1},
+          {'text': 'Aldrin', 'score': 2},
+          {'text': 'Collins', 'score': 3},
+          {'text': 'Gagarin', 'score': 4},
         ]
       },
     ];
@@ -60,21 +69,12 @@ class _MyAppState extends State<MyApp> {
           title: Text('My First App'),
         ),
         body: _questionIndex < questions.length
-            ? Column(
-                children: [
-                  Question(
-                    questions[_questionIndex]['questionText'],
-                  ),
-                  // Spread Operator to expand out the list of Answer Widgets within the Column
-                  ...(questions[_questionIndex]['answers'] as List<String>)
-                      .map((answer) {
-                    return Answer(_answerQuestion, answer);
-                  })
-                ],
+            ? Quiz(
+                questions: questions,
+                questionIndex: _questionIndex,
+                answerQuestion: _answerQuestion,
               )
-            : Center(
-                child: Text('You did it!'),
-              ),
+            : Result(_totalScore, _resetQuiz),
       ),
     );
   }
